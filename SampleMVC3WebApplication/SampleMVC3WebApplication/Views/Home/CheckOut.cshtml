@@ -1,0 +1,20 @@
+﻿@model SampleMVC3WebApplication.Models.TicketBasket
+
+@{
+    ViewBag.Title = "Checkout";
+}
+
+<h2>@ViewBag.Title</h2>
+<p>
+    Your basket details;
+</p>
+<ul>
+    <li>Basket Id: @Model.Id</li>
+    <li>Purchase Description: @Model.PurchaseDescription</li>
+    <li>Currency: @Model.Currency</li>
+    <li>Total Price: @Model.TotalPrice</li>
+</ul>
+
+<a href="@Url.Action("PayPalExpressCheckout", "Purchase")">
+   <img src="https://www.paypalobjects.com/en_US/i/btn/btn_xpressCheckout.gif" alt="PayPal" />
+</a>

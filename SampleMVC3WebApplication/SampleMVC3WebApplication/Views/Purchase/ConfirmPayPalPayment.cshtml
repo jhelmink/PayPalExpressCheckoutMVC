@@ -1,0 +1,26 @@
+﻿@model SampleMVC3WebApplication.Models.TicketBasket
+@{
+    ViewBag.Title = "Confirm PayPal Payment";
+}
+
+<h2>
+    @ViewBag.Title
+</h2>
+
+<p>
+    PayPal say even after the user has entered their details you must get the user to make a final confirmation back on your site.
+</p>
+
+<p>
+    Confirm Purchase for;
+</p>
+<ul>
+    <li>Basket Id: @Model.Id</li>
+    <li>Purchase Description: @Model.PurchaseDescription</li>
+    <li>Currency: @Model.Currency</li>
+    <li>Total Price: @Model.TotalPrice</li>
+</ul>
+@using (Html.BeginForm())
+{
+    <input type="submit" value="Confirm Payment" />
+}
