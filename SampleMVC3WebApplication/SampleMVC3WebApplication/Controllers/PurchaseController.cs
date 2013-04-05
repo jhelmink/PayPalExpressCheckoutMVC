@@ -21,9 +21,9 @@ namespace SampleMVC3WebApplication.Controllers
         public ActionResult PayPalExpressCheckout()
         {
             WebUILogging.LogMessage("Express Checkout Initiated");
+            // SetExpressCheckout
             TicketBasket ticketBasket = (TicketBasket)Session["TicketBasket"];
             string serverURL = HttpContext.Request.Url.GetLeftPart(UriPartial.Authority) + VirtualPathUtility.ToAbsolute("~/");
-            
             SetExpressCheckoutResponse transactionResponse = transactionService.SendPayPalSetExpressCheckoutRequest(ticketBasket, serverURL);
             // If Success redirect to PayPal for user to make payment
             if (transactionResponse == null || transactionResponse.ResponseStatus != PayPalMvc.Enums.ResponseType.Success)
@@ -37,6 +37,7 @@ namespace SampleMVC3WebApplication.Controllers
 
         public ActionResult PayPalExpressCheckoutAuthorisedSuccess(string token, string PayerID) // Note "PayerID" is returned with capitalisation as written
         {
+            // PayPal redirects back to here
             WebUILogging.LogMessage("Express Checkout Authorised");
             // GetExpressCheckoutDetails
             TempData["token"] = token;
@@ -45,7 +46,7 @@ namespace SampleMVC3WebApplication.Controllers
             if (transactionResponse == null || transactionResponse.ResponseStatus != PayPalMvc.Enums.ResponseType.Success)
             {
                 SetUserNotification("Sorry there was a problem with initiating a PayPal transaction. Please try again and contact an Administrator if this still doesn't work.");
-                WebUILogging.LogMessage("Error initiating PayPal GetExpressCheckoutDetails transaction. Error: " + transactionResponse.ToString);
+                WebUILogging.LogMessage("Error initiating PayPal GetExpressCheckoutDetails transaction. Error: " + transactionResponse.ErrorToString);
                 return RedirectToAction("Error", "Purchase");
             }
             return RedirectToAction("ConfirmPayPalPayment");
@@ -81,7 +82,7 @@ namespace SampleMVC3WebApplication.Controllers
                     WebUILogging.LogMessage("Redirecting User back to PayPal due to 10486 error (bad funding method - typically an invalid or maxed out credit card)");
                     return Redirect(string.Format(PayPalMvc.Configuration.Current.PayPalRedirectUrl, token));
                 }
-                string errorMessage = (transactionResponse == null) ? "Null Transaction Response" : transactionResponse.ToString;
+                string errorMessage = (transactionResponse == null) ? "Null Transaction Response" : transactionResponse.ErrorToString;
                 SetUserNotification("Sorry there was a problem with taking the PayPal payment, so no money has been transferred. Please try again and contact an Administrator if this still doesn't work.");
                 WebUILogging.LogMessage("Error initiating PayPal DoExpressCheckoutPayment transaction. Error: " + errorMessage);
                 return RedirectToAction("Error", "Purchase");
@@ -92,7 +93,7 @@ namespace SampleMVC3WebApplication.Controllers
             else
             {
                 // Something went wrong or the payment isn't complete
-                WebUILogging.LogMessage("Error taking PayPal payment. Error: " + transactionResponse.ToString + " - " + transactionResponse.PaymentErrorToString);
+                WebUILogging.LogMessage("Error taking PayPal payment. Error: " + transactionResponse.ErrorToString + " - Payment Error: " + transactionResponse.PaymentErrorToString);
                 TempData["TransactionResult"] = transactionResponse.PAYMENTREQUEST_0_LONGMESSAGE;
                 return RedirectToAction("PostPaymentFailure");
             }
