@@ -1,4 +1,4 @@
-This project is an ASP.NET MVC implementation of the PayPal Express Checkout Process.
+This project is an ASP.NET MVC C# implementation of the PayPal Express Checkout Process.
 
 The main PayPalMVC library wraps the PayPal API NVP Express Checkout Requests/Responses as objects.
 

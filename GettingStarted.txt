@@ -1,0 +1,14 @@
+Within the PayPalMVC Library itself there are only a couple of things you really need to know about;
+
+Configuration.cs - this contains the hard coded Live/Sandbox API addresses and API version number which may eventually need to change.
+Logging.cs - you'll probably want to add your favourite logger here, currently writes to Trace output.
+The Request and Response objects - they do not contain every single possible property listed in the PayPal documentation as most were not applicable for a simple implementation. You can easily add any you might need to these objects.
+
+
+Within the SampleMVC3WebApplication you should be aware of;
+
+web.config - the first thing you need to do is get a sandbox merchant account and enter your details here.
+TransactionService.cs - this uses the PayPalMVC Library and allows you to store the transactions results in your application database.
+WebUILogging.cs - you'll probably want to add your favourite logger here too, also currently writes to Trace output.
+
+Any other suggestions for expanding this documentation welcome!
