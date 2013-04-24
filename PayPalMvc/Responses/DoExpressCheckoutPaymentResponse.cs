@@ -1,30 +1,26 @@
 using PayPalMvc.Enums;
 namespace PayPalMvc {
 	/// <summary>
-	/// Response received from a transaction registration
+	/// Response received from a take payment request
 	/// </summary>
     public class DoExpressCheckoutPaymentResponse : CommonPaymentResponse
     {
+        // PayPal Response properties
         public PaymentStatus PAYMENTINFO_0_PAYMENTSTATUS { get; set; }
-
         public string PAYMENTINFO_0_PAYMENTTYPE { get; set; }
-        
         public string PAYMENTINFO_0_TRANSACTIONID { get; set; } 
-
         public string PAYMENTINFO_0_TRANSACTIONTYPE { get; set; }
-
         public string PAYMENTINFO_0_ORDERTIME { get; set; }
-
         public string PAYMENTINFO_0_AMT { get; set; }
-
         public string PAYMENTINFO_0_CURRENCYCODE { get; set; }
-
         public string PAYMENTINFO_0_FEEAMT { get; set; }
+        public string PAYMENTINFO_0_PENDINGREASON { get; set; } // Can check why PaymentStatus is Pending
 
-        // Readable properties
+        // Human Readable re-mapped properties
         public PaymentStatus PaymentStatus { get { return PAYMENTINFO_0_PAYMENTSTATUS; } }
-        public decimal Amount { get { return decimal.Parse(PAYMENTINFO_0_AMT); } }
         public string PaymentTransactionId { get { return PAYMENTINFO_0_TRANSACTIONID; } } // Stored
+        public decimal PaymentAmount { get { return decimal.Parse(PAYMENTINFO_0_AMT); } }
+        public decimal PaymentPortionPayPalFees { get { return decimal.Parse(PAYMENTINFO_0_FEEAMT); } }
 
         public string ToString // Stored
         {

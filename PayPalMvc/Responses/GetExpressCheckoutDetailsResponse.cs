@@ -1,33 +1,22 @@
 using PayPalMvc.Enums;
 namespace PayPalMvc {
 	/// <summary>
-	/// Response received from a transaction registration
+	/// Response received from a checkout details request
 	/// </summary>
     public class GetExpressCheckoutDetailsResponse : CommonPaymentResponse
     {
+        // PayPal Response properties
         public CheckoutStatus CHECKOUTSTATUS { get; set; }
-
-        /// <summary>
-        /// Should be the same as the baskedId we passed in as the tracking reference for the transaction
-        /// </summary>
-        public string PAYMENTREQUEST_0_INVNUM { get; set; }
-
+        public string PAYMENTREQUEST_0_INVNUM { get; set; } // Should be the same as the baskedId we passed in as the tracking reference for the transaction registration
         public string PAYERSTATUS { get; set; }
-
         public string PAYERID { get; set; } // Stored
-
         public string EMAIL { get; set; }
-
         public string SALUTATION { get; set; }
-
         public string FIRSTNAME { get; set; }
-
         public string MIDDLENAME { get; set; }
-
         public string LASTNAME { get; set; }
 
-        // For readability and storage
-
+        // Human Readable re-mapped properties
         public string TrackingReference { get { return PAYMENTREQUEST_0_INVNUM; } } // Stored
 
         public string ToString // Stored

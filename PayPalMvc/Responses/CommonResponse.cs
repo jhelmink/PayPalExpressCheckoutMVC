@@ -5,24 +5,14 @@ namespace PayPalMvc {
 	/// </summary>
 	public abstract class CommonResponse {
 		
-        /// <summary>
-		/// Acknowledgement of transaction
-		/// </summary>
-		public ResponseType ACK { get; set; }
-
-        /// <summary>
-        /// PayPal Transaction Id
-        /// </summary>
-        public string CORRELATIONID { get; set; }
-
+        // PayPal Response properties
+		public ResponseType ACK { get; set; } // Acknowledgement of transaction
+        public string CORRELATIONID { get; set; } // PayPal Transaction Id
         public string TIMESTAMP { get; set; }
-
         public string VERSION { get; set; }
-
         public string BUILD { get; set; }
 
-
-        // For readability
+        // Human readable re-mapped properties
         public ResponseType ResponseStatus { get { return ACK; } } // Stored
         public string RequestId { get { return CORRELATIONID; } } // Stored
 
