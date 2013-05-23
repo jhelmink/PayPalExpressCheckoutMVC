@@ -14,9 +14,11 @@ namespace SampleMVC3WebApplication.Services
     } 
 
     /// <summary>
-    /// The Transaction Service allows your app to store the transactions in your database (create a table to match the PayPalTransaction model)
-    /// You can also use it to transform your systems purchase object (eg cart, basket, or single item) into one that will fit with PayPal
-    /// You should copy this into your project and modify it to accept your purchase object
+    /// The Transaction Service is used to transform a purchase object (eg cart, basket, or single item) into a sale request with PayPal (in this case a cart)
+    /// It also allows your app to store the transactions in your database (create a table to match the PayPalTransaction model)
+    /// 
+    /// You should copy this file into your project and modify it to accept your purchase object, store PayPal transaction responses in your database,
+    /// as well as log events with your favourite logger.
     /// </summary>
     public class TransactionService : ITransactionService
     {
@@ -29,7 +31,8 @@ namespace SampleMVC3WebApplication.Services
                 WebUILogging.LogMessage("SendPayPalSetExpressCheckoutRequest");
 
                 // Optional handling of cart items: If there is only a single item being sold we don't need a list of expressCheckoutItems
-                // Note: Items are currently NOT stored by PayPal in the order history so you need to keep your own records of what items were in the cart
+                // However if you're selling a single item as a sale consider also adding it as an ExpressCheckoutItem as it looks better once you get to PayPal's site
+                // Note: ExpressCheckoutItems are currently NOT stored by PayPal against the sale in the users order history so you need to keep your own records of what items were in a cart
                 List<ExpressCheckoutItem> expressCheckoutItems = null;
                 if (cart.Items != null)
                 {

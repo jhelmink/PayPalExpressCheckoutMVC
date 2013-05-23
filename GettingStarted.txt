@@ -17,5 +17,6 @@ Using the SampleMVC3WebApplication;
 * TransactionService.cs - this uses the PayPalMVC Library and allows you to store the transactions results in your application database. You should be able to use a modified copy of this in your actual application as the interface between your app and the PayPalMVC Library. You should modify it to accept your applications purchase object (cart/basket/item).
 * PurchaseController.cs - you'll probably want to copy/modify this as the base for your purchase Actions.
 * Purchase Views - you'll need all these views (or your own versions) to match the Actions in the PurchaseController.
+* WebUILogging.cs - use your favourite logger here.
 
 Any other suggestions for expanding this documentation welcome!

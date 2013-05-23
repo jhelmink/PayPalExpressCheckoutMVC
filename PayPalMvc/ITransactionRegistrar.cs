@@ -6,13 +6,14 @@ namespace PayPalMvc {
         
         /// <summary>
         /// Setup the Express Checkout request with PayPal
+        /// This sets up the sale for X value in Y currency against a sale description (with optional items)
         /// </summary>
         /// <param name="currencyCode">Currency Code to use for sale</param>
         /// <param name="amount">Total amount of sale</param>
-        /// <param name="description">Description that PayPal will show to users for this sale</param>
+        /// <param name="description">Description that PayPal will show to users for this sale (this will appear in the order history)</param>
         /// <param name="trackingReference">Unique tracking references for this sale</param>
         /// <param name="serverURL">Your server URL (Cancel/Return Actions get appended to this)</param>
-        /// <param name="purchaseItems">Optional list of individual items being sold in the single payment transaction</param>
+        /// <param name="purchaseItems">Optional list of individual items being sold in the single payment transaction (note these are NOT stored by PayPal against the order)</param>
         /// <param name="userEmail">Optional email for user making purchase</param>
         /// <returns>SetExpressCheckoutResponse from PayPal</returns>
         SetExpressCheckoutResponse SendSetExpressCheckout(string currencyCode, decimal amount, string description, string trackingReference, string serverURL, List<ExpressCheckoutItem> purchaseItems = null, string userEmail = null);
