@@ -16,7 +16,7 @@ namespace PayPalMvc {
         public ResponseType ResponseStatus { get { return ACK; } } // Stored
         public string RequestId { get { return CORRELATIONID; } } // Stored
 
-        // For error capturing
+        // For error capturing (note we only capture the first (index0) error messages)
         public string L_ERRORCODE0 { get; set; }
         public string L_SHORTMESSAGE0 { get; set; }
         public string L_LONGMESSAGE0 { get; set; }

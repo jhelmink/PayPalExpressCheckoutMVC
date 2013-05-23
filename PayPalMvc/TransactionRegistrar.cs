@@ -1,6 +1,7 @@
 using System.Web.Routing;
 using System;
 using System.Web.Configuration;
+using System.Collections.Generic;
 
 namespace PayPalMvc
 {
@@ -31,19 +32,10 @@ namespace PayPalMvc
             this.deserializer = new ResponseSerializer();
 		}
 
-        /// <summary>
-        /// Setup the Express Checkout request with PayPal
-        /// </summary>
-        /// <param name="currencyCode">Currency Code to use for sale</param>
-        /// <param name="amount">Total amount of sale</param>
-        /// <param name="description">Description that PayPal will show to users for this sale</param>
-        /// <param name="trackingReference">Unique tracking references for this sale</param>
-        /// <param name="serverURL">Your server URL (Cancel/Return Actions get appended to this)</param>
-        /// <param name="userEmail">Optional email for user making purchase</param>
-        /// <returns></returns>
-        public SetExpressCheckoutResponse SendSetExpressCheckout(string currencyCode, decimal amount, string description, string trackingReference, string serverURL, string userEmail = null)
+        // See ITransactionRegistrar for parameter descriptions
+        public SetExpressCheckoutResponse SendSetExpressCheckout(string currencyCode, decimal amount, string description, string trackingReference, string serverURL, List<ExpressCheckoutItem> purchaseItems = null, string userEmail = null)
         {
-            SetExpressCheckoutRequest request = new SetExpressCheckoutRequest(currencyCode, amount, description, trackingReference, serverURL, userEmail);
+            SetExpressCheckoutRequest request = new SetExpressCheckoutRequest(currencyCode, amount, description, trackingReference, serverURL, purchaseItems, userEmail);
             
             string postData = serializer.Serialize(request);
             Logging.LogLongMessage("PayPal Send Request", "Serlialized Request to PayPal API: " + postData);
@@ -55,11 +47,7 @@ namespace PayPalMvc
             return deserializer.Deserialize<SetExpressCheckoutResponse>(decodedResponse);
         }
 
-        /// <summary>
-        /// Get PayPal purchase status for the sale and the PayPal account details used for purchase
-        /// </summary>
-        /// <param name="token">The Express Checkout token for this sale</param>
-        /// <returns></returns>
+        // See ITransactionRegistrar for parameter descriptions
         public GetExpressCheckoutDetailsResponse SendGetExpressCheckoutDetails(string token)
         {
             GetExpressCheckoutDetailsRequest request = new GetExpressCheckoutDetailsRequest(token);
@@ -74,14 +62,7 @@ namespace PayPalMvc
             return deserializer.Deserialize<GetExpressCheckoutDetailsResponse>(decodedResponse);
         }
 
-        /// <summary>
-        /// Request payment to be taken by PayPal for the sale
-        /// </summary>
-        /// <param name="token">The Express Checkout token for this sale</param>
-        /// <param name="payerId">The PayerId of the PayPal account used for this purchase</param>
-        /// <param name="currencyCode">Currency Code to use for sale</param>
-        /// <param name="amount">Total amount of sale</param>
-        /// <returns></returns>
+        // See ITransactionRegistrar for parameter descriptions
         public DoExpressCheckoutPaymentResponse SendDoExpressCheckoutPayment(string token, string payerId, string currencyCode, decimal amount)
         {
             DoExpressCheckoutPaymentRequest request = new DoExpressCheckoutPaymentRequest(token, payerId, currencyCode, amount);

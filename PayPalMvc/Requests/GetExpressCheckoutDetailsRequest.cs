@@ -11,8 +11,8 @@ namespace PayPalMvc
 
         public GetExpressCheckoutDetailsRequest(string token)
         {
-            this.method = RequestType.GetExpressCheckoutDetails;
-
+            base.method = RequestType.GetExpressCheckoutDetails;
+            
             this.token = token;
         }
 

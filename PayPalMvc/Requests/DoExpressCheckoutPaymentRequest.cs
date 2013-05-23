@@ -15,10 +15,10 @@ namespace PayPalMvc
         readonly string currencyCode;
         readonly decimal amount;
 
-
+        // See ITransactionRegister for parameter descriptions
         public DoExpressCheckoutPaymentRequest(string token, string payerId, string currencyCode, decimal amount)
         {
-            this.method = RequestType.DoExpressCheckoutPayment;
+            base.method = RequestType.DoExpressCheckoutPayment;
             this.paymentAction = PaymentAction.Sale;
 
             this.token = token;

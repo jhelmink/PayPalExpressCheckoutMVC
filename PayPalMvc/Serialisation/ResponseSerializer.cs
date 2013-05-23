@@ -47,10 +47,9 @@ namespace PayPalMvc {
                 PropertyInfo prop = type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
 
 				if (prop == null) {
-					// Ignore any additional properties instead of throwing exception
-                    // This does mean we only capture the first of any errors
-                    continue;
-                    // throw new InvalidOperationException(string.Format("Could not find a property on Type '{0}' named '{1}'", type.Name, name));
+					// Ignore any additional NVPs that we don't have properties for instead of throwing exception
+                    // This does mean we only capture the first of any errors returned into L_ERRORCODE0 etc
+                    continue; // throw new InvalidOperationException(string.Format("Could not find a property on Type '{0}' named '{1}'", type.Name, name));
 				}
 
 				object convertedValue;
