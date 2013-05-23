@@ -1,14 +1,21 @@
-Within the PayPalMVC Library itself there are only a couple of things you really need to know about;
+Getting Started:
 
-Configuration.cs - this contains the hard coded Live/Sandbox API addresses and API version number which may eventually need to change.
-Logging.cs - you'll probably want to add your favourite logger here, currently writes to Trace output.
-The Request and Response objects - they do not contain every single possible property listed in the PayPal documentation as most were not applicable for a simple implementation. You can easily add any you might need to these objects.
+To get the Sample MVC3 App running you'll need to get a sandbox merchant account then modify the web.config and enter your details there. That's it, you should now be able to make some test transactions with the app.
 
 
-Within the SampleMVC3WebApplication you should be aware of;
+Integrating the Library into your App:
 
-web.config - the first thing you need to do is get a sandbox merchant account and enter your details here.
-TransactionService.cs - this uses the PayPalMVC Library and allows you to store the transactions results in your application database.
-WebUILogging.cs - you'll probably want to add your favourite logger here too, also currently writes to Trace output.
+Within the PayPalMVC Library itself there are only a couple of things you should be aware of;
+
+* Configuration.cs - this contains the hard coded Live/Sandbox API addresses and API version number which may eventually need to change.
+* Logging.cs - you'll probably want to add your favourite logger here, currently writes to Trace output.
+* The Request and Response objects - they do not contain every single possible property listed in the PayPal documentation as most were not applicable for a simple implementation. You can easily add any you might need to these objects.
+
+From the SampleMVC3WebApplication you'll need to;
+
+* Modify your web.config - in your application you'll need to copy the <payPal> ... </payPal> configuration section from the  web.config (don't forget the <section name="payPal" ... /> key in the <configSections> too).
+* TransactionService.cs - this uses the PayPalMVC Library and allows you to store the transactions results in your application database. You should be able to use a modified copy of this in your actual application as the interface between your app and the PayPalMVC Library.
+* PurchaseController.cs - you'll probably want to copy/modify this as the base for your purchase Actions.
+* Purchase Views - you'll need all these views (or your own versions) to match the Actions in the PurchaseController.
 
 Any other suggestions for expanding this documentation welcome!

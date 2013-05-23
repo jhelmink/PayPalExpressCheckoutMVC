@@ -6,3 +6,5 @@ It includes a fully functional sample MVC Web Application that implements the li
 
 It was inspired by work from Jeremy Skinner and Mark Embling who created an excellent SagePayMVC implementation 
 (https://github.com/JeremySkinner/SagePayMvc)
+
+Thanks to Anthony (https://bitbucket.org/anthonydotnet) for his suggestions on how to implement multiple cart items.
