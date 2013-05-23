@@ -2,41 +2,48 @@
 using System.Web.Routing;
 using PayPalMvc;
 using SampleMVC3WebApplication.Models;
+using System.Collections.Generic;
 
 namespace SampleMVC3WebApplication.Services
 {
     public interface ITransactionService
     {
-        SetExpressCheckoutResponse SendPayPalSetExpressCheckoutRequest(TicketBasket basket, string serverURL, string userEmail = null);
+        SetExpressCheckoutResponse SendPayPalSetExpressCheckoutRequest(ApplicationCart cart, string serverURL, string userEmail = null);
         GetExpressCheckoutDetailsResponse SendPayPalGetExpressCheckoutDetailsRequest(string token);
-        DoExpressCheckoutPaymentResponse SendPayPalDoExpressCheckoutPaymentRequest(TicketBasket basket, string token, string payerId);
+        DoExpressCheckoutPaymentResponse SendPayPalDoExpressCheckoutPaymentRequest(ApplicationCart cart, string token, string payerId);
     } 
 
     /// <summary>
     /// The Transaction Service allows your app to store the transactions in your database (create a table to match the PayPalTransaction model)
-    /// You should modify this to accept your purchase object, eg a basket in this case
+    /// You can also use it to transform your systems purchase object (eg cart, basket, or single item) into one that will fit with PayPal
+    /// You should copy this into your project and modify it to accept your purchase object
     /// </summary>
     public class TransactionService : ITransactionService
     {
-        private PayPalMvc.ITransactionRegistrar _payPalTransactionRegistrar;
+        private PayPalMvc.ITransactionRegistrar _payPalTransactionRegistrar = new PayPalMvc.TransactionRegistrar();
 
-        public TransactionService(PayPalMvc.ITransactionRegistrar payPalTransactionRegistrar)
-        {
-            _payPalTransactionRegistrar = payPalTransactionRegistrar;
-        }
-
-        public SetExpressCheckoutResponse SendPayPalSetExpressCheckoutRequest(TicketBasket basket, string serverURL, string userEmail = null)
+        public SetExpressCheckoutResponse SendPayPalSetExpressCheckoutRequest(ApplicationCart cart, string serverURL, string userEmail = null)
         {
             try
             {
                 WebUILogging.LogMessage("SendPayPalSetExpressCheckoutRequest");
-                SetExpressCheckoutResponse response = _payPalTransactionRegistrar.SendSetExpressCheckout(basket.Currency, basket.TotalPrice, basket.PurchaseDescription, basket.Id.ToString(), serverURL, userEmail);
+
+                // Optional handling of cart items: If there is only a single item being sold we don't need a list of expressCheckoutItems
+                List<ExpressCheckoutItem> expressCheckoutItems = null;
+                if (cart.Items != null)
+                {
+                    expressCheckoutItems = new List<ExpressCheckoutItem>();
+                    foreach (ApplicationCartItem item in cart.Items)
+                        expressCheckoutItems.Add(new ExpressCheckoutItem(item.Quantity, item.Price, item.Name, item.Description));
+                }
+
+                SetExpressCheckoutResponse response = _payPalTransactionRegistrar.SendSetExpressCheckout(cart.Currency, cart.TotalPrice, cart.PurchaseDescription, cart.Id.ToString(), serverURL, expressCheckoutItems, userEmail);
 
                 // Add a PayPal transaction record
                 PayPalTransaction transaction = new PayPalTransaction
                 {
                     RequestId = response.RequestId,
-                    TrackingReference = basket.Id.ToString(),
+                    TrackingReference = cart.Id.ToString(),
                     RequestTime = DateTime.Now,
                     RequestStatus = response.ResponseStatus.ToString(),
                     TimeStamp = response.TIMESTAMP,
@@ -87,18 +94,18 @@ namespace SampleMVC3WebApplication.Services
             return null;
         }
 
-        public DoExpressCheckoutPaymentResponse SendPayPalDoExpressCheckoutPaymentRequest(TicketBasket basket, string token, string payerId)
+        public DoExpressCheckoutPaymentResponse SendPayPalDoExpressCheckoutPaymentRequest(ApplicationCart cart, string token, string payerId)
         {
             try
             {
                 WebUILogging.LogMessage("SendPayPalDoExpressCheckoutPaymentRequest");
-                DoExpressCheckoutPaymentResponse response = _payPalTransactionRegistrar.SendDoExpressCheckoutPayment(token, payerId, basket.Currency, basket.TotalPrice);
+                DoExpressCheckoutPaymentResponse response = _payPalTransactionRegistrar.SendDoExpressCheckoutPayment(token, payerId, cart.Currency, cart.TotalPrice);
 
                 // Add a PayPal transaction record
                 PayPalTransaction transaction = new PayPalTransaction
                 {
                     RequestId = response.RequestId,
-                    TrackingReference = basket.Id.ToString(),
+                    TrackingReference = cart.Id.ToString(),
                     RequestTime = DateTime.Now,
                     RequestStatus = response.ResponseStatus.ToString(),
                     TimeStamp = response.TIMESTAMP,

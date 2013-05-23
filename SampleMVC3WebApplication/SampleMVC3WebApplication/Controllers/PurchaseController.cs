@@ -13,8 +13,7 @@ namespace SampleMVC3WebApplication.Controllers
 {
     public class PurchaseController : Controller
     {
-        private static PayPalMvc.TransactionRegistrar payPalTransactionRegistrar = new PayPalMvc.TransactionRegistrar();
-        private static TransactionService transactionService = new TransactionService(payPalTransactionRegistrar);
+        private static TransactionService transactionService = new TransactionService();
 
         #region Set Express Checkout and Get Checkout Details
 
@@ -22,14 +21,15 @@ namespace SampleMVC3WebApplication.Controllers
         {
             WebUILogging.LogMessage("Express Checkout Initiated");
             // SetExpressCheckout
-            TicketBasket ticketBasket = (TicketBasket)Session["TicketBasket"];
+            ApplicationCart cart = (ApplicationCart)Session["Cart"];
             string serverURL = HttpContext.Request.Url.GetLeftPart(UriPartial.Authority) + VirtualPathUtility.ToAbsolute("~/");
-            SetExpressCheckoutResponse transactionResponse = transactionService.SendPayPalSetExpressCheckoutRequest(ticketBasket, serverURL);
+            SetExpressCheckoutResponse transactionResponse = transactionService.SendPayPalSetExpressCheckoutRequest(cart, serverURL);
             // If Success redirect to PayPal for user to make payment
             if (transactionResponse == null || transactionResponse.ResponseStatus != PayPalMvc.Enums.ResponseType.Success)
             {
                 SetUserNotification("Sorry there was a problem with initiating a PayPal transaction. Please try again and contact an Administrator if this still doesn't work.");
-                WebUILogging.LogMessage("Error initiating PayPal SetExpressCheckout transaction. Error: " + transactionResponse.ErrorToString);
+                string errorMessage = (transactionResponse == null) ? "Null Transaction Response" : transactionResponse.ErrorToString;
+                WebUILogging.LogMessage("Error initiating PayPal SetExpressCheckout transaction. Error: " + errorMessage);
                 return RedirectToAction("Error", "Purchase");
             }
             return Redirect(string.Format(PayPalMvc.Configuration.Current.PayPalRedirectUrl, transactionResponse.TOKEN));
@@ -46,7 +46,8 @@ namespace SampleMVC3WebApplication.Controllers
             if (transactionResponse == null || transactionResponse.ResponseStatus != PayPalMvc.Enums.ResponseType.Success)
             {
                 SetUserNotification("Sorry there was a problem with initiating a PayPal transaction. Please try again and contact an Administrator if this still doesn't work.");
-                WebUILogging.LogMessage("Error initiating PayPal GetExpressCheckoutDetails transaction. Error: " + transactionResponse.ErrorToString);
+                string errorMessage = (transactionResponse == null) ? "Null Transaction Response" : transactionResponse.ErrorToString;
+                WebUILogging.LogMessage("Error initiating PayPal GetExpressCheckoutDetails transaction. Error: " + errorMessage);
                 return RedirectToAction("Error", "Purchase");
             }
             return RedirectToAction("ConfirmPayPalPayment");
@@ -59,19 +60,19 @@ namespace SampleMVC3WebApplication.Controllers
         public ActionResult ConfirmPayPalPayment()
         {
             WebUILogging.LogMessage("Express Checkout Confirmation");
-            TicketBasket ticketBasket = (TicketBasket)Session["TicketBasket"];
-            return View(ticketBasket);
+            ApplicationCart cart = (ApplicationCart)Session["Cart"];
+            return View(cart);
         }
 
         [HttpPost]
         public ActionResult ConfirmPayPalPayment(bool confirmed = true)
         {
             WebUILogging.LogMessage("Express Checkout Confirmed");
-            TicketBasket ticketBasket = (TicketBasket)Session["TicketBasket"];
+            ApplicationCart cart = (ApplicationCart)Session["Cart"];
             // DoExpressCheckoutPayment
             string token = TempData["token"].ToString();
             string payerId = TempData["payerId"].ToString();
-            DoExpressCheckoutPaymentResponse transactionResponse = transactionService.SendPayPalDoExpressCheckoutPaymentRequest(ticketBasket, token, payerId);
+            DoExpressCheckoutPaymentResponse transactionResponse = transactionService.SendPayPalDoExpressCheckoutPaymentRequest(cart, token, payerId);
 
             if (transactionResponse == null || transactionResponse.ResponseStatus != PayPalMvc.Enums.ResponseType.Success)
             {
@@ -82,8 +83,8 @@ namespace SampleMVC3WebApplication.Controllers
                     WebUILogging.LogMessage("Redirecting User back to PayPal due to 10486 error (bad funding method - typically an invalid or maxed out credit card)");
                     return Redirect(string.Format(PayPalMvc.Configuration.Current.PayPalRedirectUrl, token));
                 }
-                string errorMessage = (transactionResponse == null) ? "Null Transaction Response" : transactionResponse.ErrorToString;
                 SetUserNotification("Sorry there was a problem with taking the PayPal payment, so no money has been transferred. Please try again and contact an Administrator if this still doesn't work.");
+                string errorMessage = (transactionResponse == null) ? "Null Transaction Response" : transactionResponse.ErrorToString;
                 WebUILogging.LogMessage("Error initiating PayPal DoExpressCheckoutPayment transaction. Error: " + errorMessage);
                 return RedirectToAction("Error", "Purchase");
             }
@@ -106,11 +107,11 @@ namespace SampleMVC3WebApplication.Controllers
         public ActionResult PostPaymentSuccess()
         {
             WebUILogging.LogMessage("Post Payment Result: Success");
-            TicketBasket ticketBasket = (TicketBasket)Session["TicketBasket"];
-            ViewBag.TrackingReference = ticketBasket.Id;
-            ViewBag.Description = ticketBasket.PurchaseDescription;
-            ViewBag.TotalCost = ticketBasket.TotalPrice;
-            ViewBag.Currency = ticketBasket.Currency;
+            ApplicationCart cart = (ApplicationCart)Session["Cart"];
+            ViewBag.TrackingReference = cart.Id;
+            ViewBag.Description = cart.PurchaseDescription;
+            ViewBag.TotalCost = cart.TotalPrice;
+            ViewBag.Currency = cart.Currency;
             return View();
         }
 

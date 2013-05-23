@@ -68,8 +68,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ApplicationCartItem.cs" />
     <Compile Include="Models\PayPalTransaction.cs" />
-    <Compile Include="Models\TicketBasket.cs" />
+    <Compile Include="Models\ApplicationCart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

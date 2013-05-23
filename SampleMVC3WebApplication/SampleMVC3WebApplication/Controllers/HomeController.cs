@@ -19,20 +19,57 @@ namespace SampleMVC3WebApplication.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Simple single object checkout, the description is shown on PayPal when making the purchase
+        /// </summary>
         public ActionResult CheckOut()
         {
-            TicketBasket basket = new TicketBasket
+            ApplicationCart cart = new ApplicationCart
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid(), // Unique purchase Id
                 Currency = "GBP",
-                PurchaseDescription = "2 x Tickets to the Gun show",
-                TotalPrice = 1.50M
+                PurchaseDescription = "Left Handed Screwdriver",
+                TotalPrice = 5.00M
             };
 
             // Storing this in session, you might want to store in it a database
-            Session["TicketBasket"] = basket;
+            Session["Cart"] = cart;
+
+            return View(cart);
+        }
+
+        /// <summary>
+        /// Multi item checkout using a cart of items, these are shown on PayPal when making the purchase
+        /// </summary>
+        public ActionResult CheckOutCart()
+        {
+            ApplicationCart cart = new ApplicationCart
+            {
+                Id = Guid.NewGuid(), // Unique cart Id
+                Currency = "GBP",
+                PurchaseDescription = "Tickets", // This is what appears in the user's PayPal order history, not the individual items
+                Items = new List<ApplicationCartItem>()
+                {
+                    new ApplicationCartItem
+                    {
+                        Quantity = 1,
+                        Price = 5.00M,
+                        Name = "Main Event Ticket",
+                        Description = "The Main Event you've been waiting to see."
+                    },
+                    new ApplicationCartItem
+                    {
+                        Quantity = 2,
+                        Price = 2.00M,
+                        Name = "Gun Show Ticket",
+                        // Description = "Optional for each item"
+                    }
+                }
+            };
+
+            Session["Cart"] = cart;
             
-            return View(basket);
+            return View("CheckOut", cart);
         }
     }
 }

@@ -21,4 +21,9 @@
     <li>Signature: @ViewBag.Signature</li>
 </ul>
 
+<p>
+    There are two ways to make a purchase, using a single purchase object (eg if you only sell one thing), or using a cart with multiple items.
+</p>
 <a href="@Url.Action("CheckOut", "Home")">Go to Checkout</a>
+<br /><br />
+<a href="@Url.Action("CheckOutCart", "Home")">Go to Checkout Cart with Multiple Items</a>
