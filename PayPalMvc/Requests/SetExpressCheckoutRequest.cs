@@ -1,4 +1,5 @@
 using PayPalMvc.Enums;
+using System.Collections.Generic;
 namespace PayPalMvc
 {
     /// <summary>
@@ -10,25 +11,34 @@ namespace PayPalMvc
         readonly PaymentAction paymentAction;
         
         readonly string currencyCode;
-        readonly decimal amount;
+        readonly decimal totalAmount;
         readonly string paymentDescription;
         readonly string trackingReference;
+
+        readonly List<ExpressCheckoutItem> items;
 
         readonly string serverURL;
         readonly string email;
 
-
-        public SetExpressCheckoutRequest(string currencyCode, decimal amount, string paymentDescription, string trackingReference, string serverURL, string userEmail = null)
+        // See ITransactionRegister for parameter descriptions
+        public SetExpressCheckoutRequest(string currencyCode, decimal totalAmount, string paymentDescription, string trackingReference, string serverURL, List<ExpressCheckoutItem> purchaseItems = null, string userEmail = null)
         {
-            this.method = RequestType.SetExpressCheckout;
+            base.method = RequestType.SetExpressCheckout;
             this.paymentAction = PaymentAction.Sale;
 
             this.currencyCode = currencyCode;
-            this.amount = amount;
-            this.serverURL = serverURL;
+            this.totalAmount = totalAmount;
             this.paymentDescription = paymentDescription;
             this.trackingReference = trackingReference;
+
+            this.serverURL = serverURL;
+            this.items = purchaseItems;
             this.email = userEmail;
+        }
+
+        public string PAYMENTREQUEST_0_PAYMENTACTION
+        {
+            get { return paymentAction.ToString(); }
         }
 
         public string PAYMENTREQUEST_0_CURRENCYCODE
@@ -38,12 +48,7 @@ namespace PayPalMvc
 
         public string PAYMENTREQUEST_0_AMT
         {
-            get { return amount.ToString("f2"); }
-        }
-
-        public string PAYMENTREQUEST_0_PAYMENTACTION 
-        {
-            get { return paymentAction.ToString(); }
+            get { return totalAmount.ToString("f2"); }
         }
 
         public string PAYMENTREQUEST_0_DESC
@@ -56,6 +61,12 @@ namespace PayPalMvc
             get { return trackingReference; }
         }
 
+        [Optional]
+        public string EMAIL
+        {
+            get { return email; }
+        }
+
         public string RETURNURL
         {
             get { return serverURL + Configuration.Current.ReturnAction; }
@@ -66,9 +77,11 @@ namespace PayPalMvc
             get { return serverURL + Configuration.Current.CancelAction; }
         }
 
-        public string EMAIL
+        // Optional List of Items in this purchase
+        [Optional]
+        public List<ExpressCheckoutItem> Items
         {
-            get { return email; }
+            get { return this.items; }
         }
     }
 }
