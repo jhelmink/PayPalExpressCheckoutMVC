@@ -29,7 +29,7 @@ namespace SampleMVC3WebApplication.Controllers
                 Id = Guid.NewGuid(), // Unique purchase Id
                 Currency = "GBP",
                 PurchaseDescription = "Left Handed Screwdriver",
-                TotalPrice = 5.00M
+                TotalPrice = 5.00M // This does NOT get shown to the user on PayPal when making a single object purchase, but is charged and appears in their order history
             };
 
             // Storing this in session, you might want to store in it a database

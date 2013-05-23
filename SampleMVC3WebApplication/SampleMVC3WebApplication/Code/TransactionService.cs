@@ -29,6 +29,7 @@ namespace SampleMVC3WebApplication.Services
                 WebUILogging.LogMessage("SendPayPalSetExpressCheckoutRequest");
 
                 // Optional handling of cart items: If there is only a single item being sold we don't need a list of expressCheckoutItems
+                // Note: Items are currently NOT stored by PayPal in the order history so you need to keep your own records of what items were in the cart
                 List<ExpressCheckoutItem> expressCheckoutItems = null;
                 if (cart.Items != null)
                 {
