@@ -1,4 +1,5 @@
 using PayPalMvc.Enums;
+using System.Globalization;
 namespace PayPalMvc
 {
     /// <summary>
@@ -45,7 +46,7 @@ namespace PayPalMvc
 
         public string PAYMENTREQUEST_0_AMT
         {
-            get { return amount.ToString("f2"); }
+            get { return amount.ToString(new CultureInfo("en-US", false)); }
         }
 
         public string PAYMENTREQUEST_0_PAYMENTACTION 
